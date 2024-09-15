@@ -27,9 +27,8 @@ export async function createInvoice(formData: FormData) {
 
   // Test it out:
   console.log(amountInCents);
-
   await sql`
-  INSERT INTO invoices (customer_id, amount, status, date)
+  INSERT INT invoices (customer_id, amount, status, date)
   VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
 `;
 
@@ -59,6 +58,11 @@ export async function updateInvoice(id: string, formData: FormData) {
 }
 
 export async function deleteInvoice(id: string) {
-  await sql`DELETE FROM invoices WHERE id = ${id}`;
-  revalidatePath("/dashboard/invoices");
+  try {
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath("/dashboard/invoices");
+    return { message: "Deleted Invoice." };
+  } catch (error) {
+    return { message: "Database error: error deleting invoice." };
+  }
 }
